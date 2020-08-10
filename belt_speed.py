@@ -1,6 +1,9 @@
 from tkinter import Tk, Label, Entry, Button, Radiobutton, StringVar
 from tkinter.font import Font
+from tkinter.messagebox import showerror
 import math
+
+__version__ = "0.1"
 
 class BeltSpeedUI():
 	
@@ -107,19 +110,26 @@ class BeltSpeedController():
 
 	def calculate(self):
 		
-		diameter = float(self.app.entry_diameter.get())
-		
-		if self.app.var_check.get() == "rpm":
+		try:
+			diameter = float(self.app.entry_diameter.get())
 			
-			rpm = float(self.app.entry_rpm.get())
-			self.solution = self.model.calculate_tspeed(diameter, rpm)
-			self.app.tspeed_var.set(int(round(self.solution, 0)))
-		
-		else:	
+			if self.app.var_check.get() == "rpm":
+				
+				rpm = float(self.app.entry_rpm.get())
+				self.solution = self.model.calculate_tspeed(diameter, rpm)
+				self.app.tspeed_var.set(int(round(self.solution, 0)))
 			
-			tspeed = float(self.app.entry_tspeed.get())
-			self.solution = self.model.calculate_rpm(diameter, tspeed)
-			self.app.rpm_var.set(int(round(self.solution, 0)))
+			else:	
+				
+				tspeed = float(self.app.entry_tspeed.get())
+				self.solution = self.model.calculate_rpm(diameter, tspeed)
+				self.app.rpm_var.set(int(round(self.solution, 0)))
+		except ValueError as e:
+			showerror("Value Error",
+			f"Make sure entries are numbers, no letters are allowed.\nEmpty fields will also generate this error.\n\n\nPython Error: {e}")
+		except ZeroDivisionError as e:
+			showerror("Zero Division Error",
+			f"Re-evaluate your entries, you're dividing by zero.\n\n\nPython Error: {e}")
 			
 if __name__ == "__main__":
 	
